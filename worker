@@ -98,7 +98,7 @@ class Worker extends CI_Controller {
 		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 			exec('php -S localhost:8000 -t ' . __DIR__ . '\public_html');
 		} else {
-			shell_exec('php -S localhost:8000 -t ' . __DIR__ . '\public_html');
+			shell_exec('php -S localhost:8000 -t ' . __DIR__ . '/public_html');
 		}
 
 	}
