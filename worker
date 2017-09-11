@@ -153,7 +153,7 @@ class Worker extends CI_Controller {
 	protected function _controller_creator($name) {
 
 		$file_content  = "<?php defined('BASEPATH') OR exit('No direct script access allowed');\n\n";
-		$file_content .= "class " . $name . " {\n\n";
+		$file_content .= "class " . $name . " extends CI_Controller {\n\n";
 		$file_content .= "	public function __construct() {\n";
 		$file_content .= "		parent::__construct();\n";
 		$file_content .= "	}\n\n";
