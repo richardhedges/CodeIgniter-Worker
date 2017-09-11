@@ -1,0 +1,185 @@
+#!/usr/bin/php
+<?php
+
+error_reporting(1);
+
+$environment = 'development';
+
+$system_path = 'system';
+$application_folder = 'application';
+
+if (realpath($system_path) !== false) {
+	$system_path = realpath($system_path) . '/';
+}
+
+$system_path = rtrim($system_path, '/') . '/';
+
+define('BASEPATH', str_replace("\\", "/", $system_path));
+define('APPPATH', $application_folder . '/');
+define('EXT', '.php');
+define('ENVIRONMENT', $environment ? $environment : 'development');
+
+require(BASEPATH . 'core/Common.php');
+
+if (file_exists(APPPATH . 'config/' . ENVIRONMENT . '/constants.php')) {
+	require(APPPATH . 'config/' . ENVIRONMENT . '/constants.php');
+} else {
+	require(APPPATH . 'config/constants.php');
+}
+
+$GLOBALS['CFG'] =& load_class('Config', 'core');
+$GLOBALS['UNI'] =& load_class('Utf8', 'core');
+
+if (file_exists($basepath . 'core/Security.php')) {
+	$GLOBALS['SEC'] =& load_class('Security', 'core');
+}
+
+load_class('Loader', 'core');
+load_class('Router', 'core');
+load_class('Input', 'core');
+load_class('Lang', 'core');
+
+require(BASEPATH . 'core/Controller.php');
+
+function &get_instance() {
+	return CI_Controller::get_instance();
+}
+
+class Worker extends CI_Controller {
+
+	public function __construct($method = null, $args = array()) {
+
+		parent::__construct();
+
+		if (!$this->input->is_cli_request()) {
+			self::error('Please use this tool from the command line.');
+		}
+
+		if (is_null($method)) {
+
+			echo "Usage example:\n\n";
+			echo "php worker make:controller Welcome          Create a controller named Welcome\n";
+			echo "php worker make:model Users                 Create a model named Users\n";
+			echo "php worker make:library Template            Create a library named Template\n";
+
+			exit;
+			return false;
+
+		}
+
+		$this->load->helper('file');
+
+		if (strpos($method, ':') > -1) {
+
+			$maker = explode(':', $method);
+
+			if (method_exists(__CLASS__, $maker[0])) {
+				self::$maker[0]($maker[1], $args);
+			} else {
+				self::error('There was an error in ' . __FILE__ . ' on line #' . __LINE__);
+			}
+
+		} else if (method_exists(__CLASS__, $method)) {
+			self::$method($args);
+		} else {
+			self::error('`' . $method . '` is not a valid method.');
+		}
+
+	}
+
+	protected function error($msg) {
+		echo $msg;
+		exit;
+		return false;
+	}
+
+	public function make($make, $args = array()) {
+
+		$allowed = array(
+			'controller' => APPPATH . 'controllers',
+			'model' => APPPATH . 'models',
+			'library' => APPPATH . 'libraries',
+		);
+
+		if (!isset($allowed[$make])) {
+			self::error('Invalid type: ' . $make);
+		}
+
+		if (!isset($args[0])) {
+			self::error('You must set the ' . $make . ' name.');
+		}
+
+		$file = $allowed[$make] . '/' . $args[0] . EXT;
+
+		if (file_exists($file)) {
+			self::error('That ' . $make . ' already exists.');
+		}
+
+		$name = $args[0];
+
+		if ($make == 'controller' && strpos($name, '_') > -1) {
+
+			$name_parts = explode('_', $name);
+			$name = '';
+
+			foreach ($name_parts as $part) {
+				$name .= ucfirst($part) . '_';
+			}
+
+		} else {
+			$name = ucfirst($name);
+		}
+
+		$name = rtrim($name, '_');
+
+		if ($make == 'controller') {
+			$file_content = self::_controller_creator($name);
+		} else {
+			$file_content  = "<?php defined('BASEPATH') OR exit('No direct script access allowed');\n\n";
+			$file_content .= "class " . $name . " {\n\n";
+			$file_content .= "	// your code here\n\n";
+			$file_content .= "}";
+		}
+
+		if (!write_file($allowed[$make] . '/' . ucfirst($args[0]) . EXT, $file_content)) {
+			self::error('There was an error creating the ' . $make);
+		} else {
+			echo 'New ' . $make . ' created: ' . $file;
+			return true;
+		}
+
+	}
+
+	protected function _controller_creator($name) {
+
+		$file_content  = "<?php defined('BASEPATH') OR exit('No direct script access allowed');\n\n";
+		$file_content .= "class " . $name . " {\n\n";
+		$file_content .= "	public function __construct() {\n";
+		$file_content .= "		parent::__construct();\n";
+		$file_content .= "	}\n\n";
+		$file_content .= "	public function index() {\n";
+		$file_content .= "		// your code here\n";
+		$file_content .= "	}\n\n";
+		$file_content .= "}";
+
+		return $file_content;
+
+	}
+
+}
+
+if (isset($argv[0]) && $argv[0] == basename(__FILE__)) {
+	unset($argv[0]);
+	$argv = array_values($argv);
+}
+
+$method = isset($argv[0]) ? $argv[0] : null;
+
+if (isset($argv[0])) {
+	unset($argv[0]);
+	$argv = array_values($argv);
+}
+
+$args = $argv;
+
+new Worker($method, $args);
