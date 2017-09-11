@@ -1,4 +1,4 @@
-# CodeIgnitr Command Line Worker
+# CodeIgniter Command Line Worker
 
 Works in a similar way to that of Laravel's Artisan command line tool - you can create controllers, models and libraries at the moment in this very early stage.
 
