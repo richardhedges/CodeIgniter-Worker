@@ -27,3 +27,7 @@ Creating a library:
 ```sh
 $ php worker make:controller Template
 ```
+Creating a view:
+```sh
+$ php worker make:view login
+```
