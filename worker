@@ -109,6 +109,7 @@ class Worker extends CI_Controller {
 			'controller' => APPPATH . 'controllers',
 			'model' => APPPATH . 'models',
 			'library' => APPPATH . 'libraries',
+			'view' => APPPATH . 'views',
 		);
 
 		if (!isset($allowed[$make])) {
@@ -144,6 +145,8 @@ class Worker extends CI_Controller {
 
 		if ($make == 'controller') {
 			$file_content = self::_controller_creator($name);
+		} else if ($make == 'view') {
+			$file_content  = "<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>\n";
 		} else {
 			$file_content  = "<?php defined('BASEPATH') OR exit('No direct script access allowed');\n\n";
 			$file_content .= "class " . $name . " {\n\n";
@@ -151,7 +154,7 @@ class Worker extends CI_Controller {
 			$file_content .= "}";
 		}
 
-		if (!write_file($allowed[$make] . '/' . ucfirst($args[0]) . EXT, $file_content)) {
+		if (!write_file($allowed[$make] . '/' . ($make == 'view' ? $args[0] : ucfirst($args[0])) . EXT, $file_content)) {
 			self::error('There was an error creating the ' . $make);
 		} else {
 			echo 'New ' . $make . ' created: ' . $file;
