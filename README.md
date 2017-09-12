@@ -21,11 +21,11 @@ $ php worker make:controller Welcome
 ```
 Creating a model:
 ```sh
-$ php worker make:controller Users
+$ php worker make:model Users
 ```
 Creating a library:
 ```sh
-$ php worker make:controller Template
+$ php worker make:library Template
 ```
 Creating a view:
 ```sh
