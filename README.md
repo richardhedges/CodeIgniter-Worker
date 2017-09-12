@@ -15,6 +15,10 @@ $ git clone https://github.com/richardhedges/CodeIgniter-Worker.git
 ```
 
 #### Example usage
+Start the webserver:
+```sh
+$ php worker serve
+```
 Creating a controller:
 ```sh
 $ php worker make:controller Welcome
