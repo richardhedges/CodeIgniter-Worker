@@ -27,6 +27,10 @@ Creating a model:
 ```sh
 $ php worker make:model Users
 ```
+Creating a model (and define the table):
+```sh
+$ php worker make:model Forum --table forum_posts
+```
 Creating a library:
 ```sh
 $ php worker make:library Template
