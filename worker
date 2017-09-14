@@ -103,12 +103,22 @@ class Worker extends CI_Controller {
 
 	}
 
-	public function migrate() {
+	public function migrate($args) {
 
 		$this->load->library('migration');
 
-		if ($this->migration->current() === FALSE) {
-			self::error($this->migration->error_string());
+		if (isset($args[0])) {
+
+			if ($this->migration->version($args[0]) === FALSE) {
+				self::error($this->migration->error_string());
+			}
+
+		} else {
+
+			if ($this->migration->latest() === FALSE) {
+				self::error($this->migration->error_string());
+			}
+
 		}
 
 	}
@@ -120,6 +130,7 @@ class Worker extends CI_Controller {
 			'model' => APPPATH . 'models',
 			'library' => APPPATH . 'libraries',
 			'view' => APPPATH . 'views',
+			'migration' => APPPATH . 'migrations',
 		);
 
 		if (!isset($allowed[$make])) {
@@ -128,6 +139,10 @@ class Worker extends CI_Controller {
 
 		if (!isset($args[0])) {
 			self::error('You must set the ' . $make . ' name.');
+		}
+
+		if ($make == 'migration') {
+			return self::_migration_creator($args[0], $allowed[$make]);
 		}
 
 		$file = $allowed[$make] . '/' . $args[0] . EXT;
@@ -202,6 +217,30 @@ class Worker extends CI_Controller {
 		$file_content .= "}";
 
 		return $file_content;
+
+	}
+
+	protected function _migration_creator($name, $directory) {
+
+		$current_migrations = count(glob($directory . '/*.php'));
+
+		$new_migration = sprintf('%03d', ($current_migrations + 1)) . '_' . $name . EXT;
+
+		$file_content  = "<?php defined('BASEPATH') OR exit('No direct script access allowed');\n\n";
+		$file_content .= "class Migration_" . ucfirst($name) . " extends CI_Migration {\n\n";
+		$file_content .= "	public function up() {\n";
+		$file_content .= "	}\n\n";
+		$file_content .= "	public function down() {\n";
+		$file_content .= "	}\n\n";
+		$file_content .= "}";
+
+		if (!write_file($directory . '/' . $new_migration, $file_content)) {
+			self::error('There was an error creating the migration');
+			return false;
+		} else {
+			echo 'New migration created.';
+			return true;
+		}
 
 	}
 
