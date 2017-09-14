@@ -103,6 +103,16 @@ class Worker extends CI_Controller {
 
 	}
 
+	public function migrate() {
+
+		$this->load->library('migration');
+
+		if ($this->migration->current() === FALSE) {
+			self::error($this->migration->error_string());
+		}
+
+	}
+
 	public function make($make, $args = array()) {
 
 		$allowed = array(
