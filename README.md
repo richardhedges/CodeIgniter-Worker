@@ -35,3 +35,6 @@ Creating a view:
 ```sh
 $ php worker make:view login
 ```
+
+#### Requirements
+The models created with worker extend a core model `MY_Model.php`. This is because of the extra functionality I plan to add at a later date - the `MY_Model.php` file has been included in this repo (credits to its creator are included in the file).

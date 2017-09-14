@@ -147,6 +147,8 @@ class Worker extends CI_Controller {
 			$file_content = self::_controller_creator($name);
 		} else if ($make == 'view') {
 			$file_content  = "<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>\n";
+		} else if ($make == 'model') {
+			$file_content = self::_model_creator($name, $args);
 		} else {
 			$file_content  = "<?php defined('BASEPATH') OR exit('No direct script access allowed');\n\n";
 			$file_content .= "class " . $name . " {\n\n";
@@ -179,6 +181,20 @@ class Worker extends CI_Controller {
 
 	}
 
+	protected function _model_creator($name, $args = array()) {
+
+		$file_content  = "<?php defined('BASEPATH') OR exit('No direct script access allowed');\n\n";
+		$file_content .= "class " . $name . " extends MY_Model {\n\n";
+		$file_content .= "	private \$_table = '" . strtolower((isset($args['--table']) ? $args['--table'] : $name)) . "';\n\n";
+		$file_content .= "	public function __construct() {\n";
+		$file_content .= "		parent::__construct();\n";
+		$file_content .= "	}\n\n";
+		$file_content .= "}";
+
+		return $file_content;
+
+	}
+
 }
 
 if (isset($argv[0]) && $argv[0] == basename(__FILE__)) {
@@ -194,5 +210,15 @@ if (isset($argv[0])) {
 }
 
 $args = $argv;
+
+foreach ($args as $key => $val) {
+
+	if (substr($val, 0, 2) == '--') {
+		$args[$val] = $args[$key + 1];
+		unset($args[$key]);
+		unset($args[$key + 1]);
+	}
+
+}
 
 new Worker($method, $args);
