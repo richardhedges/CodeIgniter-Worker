@@ -8,10 +8,16 @@ I'll be adding a lot more to this script at a later date:
 - Database interaction (both using existing models and direct input)
 - Along with additions to the controllers/models/libraries creators
 
+#### Requirements
+The models created with worker extend a core model `MY_Model.php`. This is because of the extra functionality I plan to add at a later date - the `MY_Model.php` file has been included in this repo (credits to its creator are included in the file).
+
+The playground needs [psysh](http://psysh.org/) to work at all, installation instructions provided (documentation available on their website).
+
 #### Installation
 ```sh
 $ cd your/codeigniter/project
 $ git clone https://github.com/richardhedges/CodeIgniter-Worker.git
+$ composer require psy/psysh:@stable
 ```
 
 #### Example usage
@@ -39,6 +45,3 @@ Creating a view:
 ```sh
 $ php worker make:view login
 ```
-
-#### Requirements
-The models created with worker extend a core model `MY_Model.php`. This is because of the extra functionality I plan to add at a later date - the `MY_Model.php` file has been included in this repo (credits to its creator are included in the file).
