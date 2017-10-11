@@ -25,6 +25,10 @@ Start the webserver:
 ```sh
 $ php worker serve
 ```
+Run the playground:
+```sh
+$ php worker playground
+```
 Creating a controller:
 ```sh
 $ php worker make:controller Welcome

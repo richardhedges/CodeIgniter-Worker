@@ -61,12 +61,15 @@ class Worker extends CI_Controller {
 			self::error('Please use this tool from the command line.');
 		}
 
-		if (is_null($method)) {
+		if (is_null($method) || $method == 'help') {
 
 			echo "Usage example:\n\n";
 			echo "php worker make:controller Welcome          Create a controller named Welcome\n";
 			echo "php worker make:model Users                 Create a model named Users\n";
-			echo "php worker make:library Template            Create a library named Template\n";
+			echo "php worker make:library Template            Create a library named Template\n\n";
+			echo "php worker serve                            Run PHP's built-in development server\n";
+			echo "php worker playground                       Open the playground\n\n";
+			echo "php worker help                             Open this command list\n";
 
 			exit;
 			return false;
@@ -102,6 +105,11 @@ class Worker extends CI_Controller {
 	}
 
 	public function serve() {
+
+		echo 'PHP ' . phpversion() . ' Development Server started on ' . date('D M j H:i:s Y') . "\n";
+		echo 'Listening on http://localhost:8000' . "\n";
+		echo 'Document root is ' . __DIR__ . "\n";
+		echo 'Press Ctrl-C to quit.' . "\n";
 
 		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 			exec('php -S localhost:8000 -t ' . __DIR__ . '\public_html');
@@ -254,11 +262,15 @@ class Worker extends CI_Controller {
 
 	protected function playground() {
 
-		$CI =& get_instance();
+		$ci =& get_instance();
+
+		if (!class_exists('Shell')) {
+			self::error('Shell not found - please make sure you\'ve installed the dependencies.');
+		}
 
 		$shell = new Shell();
 
-		$shell->setScopeVariables(['CI' => $CI]);
+		$shell->setScopeVariables(['ci' => $ci]);
 		$shell->run();
 
 	}
