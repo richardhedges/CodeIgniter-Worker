@@ -1,15 +1,9 @@
 # CodeIgniter Command Line Worker
 
-Works in a similar way to that of Laravel's Artisan command line tool - you can create controllers, models and libraries at the moment in this very early stage.
-
-I'll be adding a lot more to this script at a later date:
-- Migrations
-- Seeders
-- Database interaction (both using existing models and direct input)
-- Along with additions to the controllers/models/libraries creators
+A command line tool to help create controllers, models, libraries and more.
 
 #### Requirements
-The models created with worker extend a core model `MY_Model.php`. This is because of the extra functionality I plan to add at a later date - the `MY_Model.php` file has been included in this repo (credits to its creator are included in the file).
+The models created with worker extend a core model `MY_Model.php`. The `MY_Model.php` file has been included in this repo (credits to its creator are included in the file).
 
 The playground needs [psysh](http://psysh.org/) to work at all, installation instructions provided (documentation available on their website).
 
